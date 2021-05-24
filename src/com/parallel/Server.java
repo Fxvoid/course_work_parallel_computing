@@ -3,6 +3,7 @@ package com.parallel;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 public class Server {
 
@@ -25,7 +26,11 @@ public class Server {
 
             registry.bind("IndexInterface", stub);
 
-            stub.createInvertedIndex();
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the number of threads used for index creation: ");
+            int number = scanner.nextInt();
+            System.out.println("Creating index using " + number + " threads...");
+            stub.createInvertedIndex(number);
             System.out.println("Done creating inverted index!");
 
         } catch (Exception e) {
