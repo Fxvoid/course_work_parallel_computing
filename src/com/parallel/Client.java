@@ -25,6 +25,7 @@ public class Client {
                 Scanner scanner = new Scanner(System.in);
                 System.out.println("Enter your request: ");
                 String request = scanner.nextLine();
+                System.out.println("Your request can be found in files: ");
                 System.out.println(stub.search(request));
             }
 
