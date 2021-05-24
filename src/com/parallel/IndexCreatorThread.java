@@ -37,7 +37,7 @@ public class IndexCreatorThread extends Thread {
                     if (!inverted_index.containsKey(word)) {
                         List<Path> values = new ArrayList<>();
                         values.add(path);
-                        inverted_index.put(word, values);
+                        inverted_index.putIfAbsent(word, values);
                     } else
                         inverted_index.get(word).add(path);
             }
