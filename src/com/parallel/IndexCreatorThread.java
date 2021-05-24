@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.parallel.InvertedIndexManager.isBannedWord;
+import static com.parallel.InvertedIndexManager.normalizeWord;
+
 public class IndexCreatorThread extends Thread {
     ConcurrentHashMap<String, Set<Path>> inverted_index;
     List<Path> file_paths;
@@ -49,15 +52,6 @@ public class IndexCreatorThread extends Thread {
         int from_index = thread_index * block_size;
         int to_index = thread_index == (max_threads - 1) ? (file_paths.size() - 1) : (thread_index + 1) * block_size;
         return file_paths.subList(from_index, to_index);
-    }
-
-    private boolean isBannedWord(String word) {
-        String[] banned_words = {"", "a", "br", "hr"};
-        return Arrays.asList(banned_words).contains(word);
-    }
-
-    private String normalizeWord(String word) {
-        return word.toLowerCase().replaceAll("[^a-zA-Z]", "");
     }
 
 }

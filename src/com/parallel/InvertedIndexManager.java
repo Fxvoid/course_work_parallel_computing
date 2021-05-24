@@ -39,13 +39,14 @@ public class InvertedIndexManager implements InvertedIndexInterface {
 
     public String search(String search_request) throws RemoteException {
         try {
-            String[] words = search_request.split(" ");
-            Set<Path> result = inverted_index.get(normalizeWord(words[0]));
-            for (int i = 1; i < words.length; i++) {
-                Set<Path> word_search_result = inverted_index.get(normalizeWord(words[i]));
+            String[] input = normalizeInput(search_request);
+
+            Set<Path> result = inverted_index.get(input[0]);
+            for (int i = 1; i < input.length; i++) {
+                Set<Path> word_search_result = inverted_index.get(input[i]);
                 result = result.stream().distinct().filter(word_search_result::contains).collect(Collectors.toSet());
             }
-            return result.toString();
+            return !result.isEmpty() ? result.toString() : "No data matching your request found :(";
         } catch (NullPointerException ignored) {
             return "No data matching your request found :(";
         }
@@ -67,8 +68,21 @@ public class InvertedIndexManager implements InvertedIndexInterface {
         return Integer.parseInt(filename.substring(0, _i));
     }
 
-    private String normalizeWord(String word) {
+    public static String normalizeWord(String word) {
         return word.toLowerCase().replaceAll("[^a-zA-Z]", "");
+    }
+
+    private static String[] normalizeInput(String string) {
+        String[] words = string.split("\\s+");
+        for (int i = 0; i < words.length; i++) {
+            words[i] = normalizeWord(words[i]);
+        }
+        return Arrays.stream(words).filter(i -> !i.equals("") && !isBannedWord(i)).toArray(String[]::new);
+    }
+
+    public static boolean isBannedWord(String word) {
+        String[] banned_words = {"", "a", "br", "hr"};
+        return Arrays.asList(banned_words).contains(word);
     }
 
 }
