@@ -10,15 +10,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class IndexCreatorThread extends Thread {
     ConcurrentHashMap<String, List<Path>> inverted_index;
-    List<Path> filePaths;
-    Integer threadIdx, maxThreads;
+    List<Path> file_paths;
+    Integer thread_index, max_threads;
 
-    public IndexCreatorThread(ConcurrentHashMap<String, List<Path>> inverted_index, List<Path> filePaths,
-                              Integer threadIdx, Integer maxThreads) {
+    public IndexCreatorThread(ConcurrentHashMap<String, List<Path>> inverted_index, List<Path> file_paths,
+                              Integer thread_index, Integer max_threads) {
         this.inverted_index = inverted_index;
-        this.filePaths = filePaths;
-        this.threadIdx = threadIdx;
-        this.maxThreads = maxThreads;
+        this.file_paths = file_paths;
+        this.thread_index = thread_index;
+        this.max_threads = max_threads;
     }
 
     @Override
@@ -45,15 +45,15 @@ public class IndexCreatorThread extends Thread {
     }
 
     private List<Path> getListOfFiles() {
-        int block_size = filePaths.size() / maxThreads;
-        int from_index = threadIdx * block_size;
-        int to_index = threadIdx == (maxThreads - 1) ? (filePaths.size() - 1) : (threadIdx + 1) * block_size;
-        return filePaths.subList(from_index, to_index);
+        int block_size = file_paths.size() / max_threads;
+        int from_index = thread_index * block_size;
+        int to_index = thread_index == (max_threads - 1) ? (file_paths.size() - 1) : (thread_index + 1) * block_size;
+        return file_paths.subList(from_index, to_index);
     }
 
     private boolean isBannedWord(String word) {
-        String[] bannedWords = {"", "a", "br", "hr"};
-        return Arrays.asList(bannedWords).contains(word);
+        String[] banned_words = {"", "a", "br", "hr"};
+        return Arrays.asList(banned_words).contains(word);
     }
 
     private String normalizeWord(String word) {

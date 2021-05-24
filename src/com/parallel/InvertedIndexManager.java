@@ -9,30 +9,31 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InvertedIndexManager implements InvertedIndexInterface {
-    private ConcurrentHashMap<String, List<Path>> inverted_index = new ConcurrentHashMap<>();
-    private static final int small_folder_index_start = 10500;
-    private static final int small_folder_index_finish = 10750;
-    private static final int big_folder_index_start = 42000;
-    private static final int big_folder_index_finish = 43000;
+    private final ConcurrentHashMap<String, List<Path>> inverted_index = new ConcurrentHashMap<>();
+    private static final int SMALL_FOLDER_INDEX_START = 10500;
+    private static final int SMALL_FOLDER_INDEX_FINISH = 10750;
+    private static final int BIG_FOLDER_INDEX_START = 42000;
+    private static final int BIG_FOLDER_INDEX_FINISH = 43000;
+    private static final String PATH_TO_FILES_FOLDER = "C:\\Users\\Foxxx\\Desktop\\CourseWork\\aclImdb";
 
     public void createInvertedIndex(int thread_number) throws IOException {
-        IndexCreatorThread[] ThreadArray = new IndexCreatorThread[thread_number];
+        IndexCreatorThread[] thread_array = new IndexCreatorThread[thread_number];
 
-        long startTime = System.currentTimeMillis();
+        long start_time = System.currentTimeMillis();
         // initializing and starting threads
         for (int i = 0; i < thread_number; i++) {
-            ThreadArray[i] = new IndexCreatorThread(inverted_index, getListOfFiles(), i, thread_number);
-            ThreadArray[i].start();
+            thread_array[i] = new IndexCreatorThread(inverted_index, getListOfFiles(), i, thread_number);
+            thread_array[i].start();
         }
         for (int i = 0; i < thread_number; i++) {
             try {
-                ThreadArray[i].join();
+                thread_array[i].join();
             } catch (InterruptedException e) {
                 System.out.println("Error with thread-" + i);
                 e.printStackTrace();
             }
         }
-        System.out.println("Ended in " + (System.currentTimeMillis() - startTime) + " ms");
+        System.out.println("Ended in " + (System.currentTimeMillis() - start_time) + " ms");
     }
 
     public String search(String search_request) throws RemoteException {
@@ -40,8 +41,8 @@ public class InvertedIndexManager implements InvertedIndexInterface {
             String[] words = search_request.split(" ");
             List<Path> result = inverted_index.get(normalizeWord(words[0]));
             for (int i = 1; i < words.length; i++) {
-                List<Path> wordSearchResult = inverted_index.get(normalizeWord(words[i]));
-                result = result.stream().distinct().filter(wordSearchResult::contains).toList();
+                List<Path> word_search_result = inverted_index.get(normalizeWord(words[i]));
+                result = result.stream().distinct().filter(word_search_result::contains).toList();
             }
             return result.toString();
         } catch (NullPointerException ignored) {
@@ -50,19 +51,19 @@ public class InvertedIndexManager implements InvertedIndexInterface {
     }
 
     private List<Path> getListOfFiles() throws IOException {
-        List<Path> filePaths = new ArrayList<>();
-        filePaths.addAll(Files.list(Paths.get("C:\\Users\\Foxxx\\Desktop\\CourseWork\\aclImdb\\test\\neg")).filter(i -> parseFileID(i) >= small_folder_index_start && parseFileID(i) < small_folder_index_finish).toList());
-        filePaths.addAll(Files.list(Paths.get("C:\\Users\\Foxxx\\Desktop\\CourseWork\\aclImdb\\test\\pos")).filter(i -> parseFileID(i) >= small_folder_index_start && parseFileID(i) < small_folder_index_finish).toList());
-        filePaths.addAll(Files.list(Paths.get("C:\\Users\\Foxxx\\Desktop\\CourseWork\\aclImdb\\train\\neg")).filter(i -> parseFileID(i) >= small_folder_index_start && parseFileID(i) < small_folder_index_finish).toList());
-        filePaths.addAll(Files.list(Paths.get("C:\\Users\\Foxxx\\Desktop\\CourseWork\\aclImdb\\train\\pos")).filter(i -> parseFileID(i) >= small_folder_index_start && parseFileID(i) < small_folder_index_finish).toList());
-        filePaths.addAll(Files.list(Paths.get("C:\\Users\\Foxxx\\Desktop\\CourseWork\\aclImdb\\train\\unsup")).filter(i -> parseFileID(i) >= big_folder_index_start && parseFileID(i) < big_folder_index_finish).toList());
-        return filePaths;
+        List<Path> file_paths = new ArrayList<>();
+        file_paths.addAll(Files.list(Paths.get(PATH_TO_FILES_FOLDER + "\\test\\neg")).filter(i -> parseFileID(i) >= SMALL_FOLDER_INDEX_START && parseFileID(i) < SMALL_FOLDER_INDEX_FINISH).toList());
+        file_paths.addAll(Files.list(Paths.get(PATH_TO_FILES_FOLDER + "\\test\\pos")).filter(i -> parseFileID(i) >= SMALL_FOLDER_INDEX_START && parseFileID(i) < SMALL_FOLDER_INDEX_FINISH).toList());
+        file_paths.addAll(Files.list(Paths.get(PATH_TO_FILES_FOLDER + "\\train\\neg")).filter(i -> parseFileID(i) >= SMALL_FOLDER_INDEX_START && parseFileID(i) < SMALL_FOLDER_INDEX_FINISH).toList());
+        file_paths.addAll(Files.list(Paths.get(PATH_TO_FILES_FOLDER + "\\train\\pos")).filter(i -> parseFileID(i) >= SMALL_FOLDER_INDEX_START && parseFileID(i) < SMALL_FOLDER_INDEX_FINISH).toList());
+        file_paths.addAll(Files.list(Paths.get(PATH_TO_FILES_FOLDER + "\\train\\unsup")).filter(i -> parseFileID(i) >= BIG_FOLDER_INDEX_START && parseFileID(i) < BIG_FOLDER_INDEX_FINISH).toList());
+        return file_paths;
     }
 
-    private int parseFileID(Path filePath) {
-        String fileName = filePath.getFileName().toString();
-        int _i = fileName.indexOf("_");
-        return Integer.parseInt(fileName.substring(0, _i));
+    private int parseFileID(Path filepath) {
+        String filename = filepath.getFileName().toString();
+        int _i = filename.indexOf("_");
+        return Integer.parseInt(filename.substring(0, _i));
     }
 
     private String normalizeWord(String word) {
