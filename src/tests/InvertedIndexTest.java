@@ -7,6 +7,7 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,6 +82,15 @@ class InvertedIndexTest {
                                                             " Watchable if you like blood and guts." +
                                                             " I give it a four out of ten for gore.");
         assertNotEquals("No data matching your request found :(", result);
+    }
+
+    @Test
+    void testParallelConsequentComparison() throws IOException {
+        invertedIndexManager.createInvertedIndex(1);
+        ConcurrentHashMap map1 = invertedIndexManager.inverted_index;
+        invertedIndexManager.createInvertedIndex(5);
+        ConcurrentHashMap map2 = invertedIndexManager.inverted_index;
+        assertEquals(map1, map2);
     }
 
 }

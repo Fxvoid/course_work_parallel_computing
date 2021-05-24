@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class InvertedIndexManager implements InvertedIndexInterface {
-    private final ConcurrentHashMap<String, Set<Path>> inverted_index = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, Set<Path>> inverted_index = new ConcurrentHashMap<>();
     private static final int SMALL_FOLDER_INDEX_START = 10500;
     private static final int SMALL_FOLDER_INDEX_FINISH = 10750;
     private static final int BIG_FOLDER_INDEX_START = 42000;
