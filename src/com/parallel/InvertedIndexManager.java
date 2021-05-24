@@ -20,8 +20,7 @@ public class InvertedIndexManager implements InvertedIndexInterface {
     public void createInvertedIndex(int thread_number) throws IOException {
         IndexCreatorThread[] thread_array = new IndexCreatorThread[thread_number];
 
-        long start_time = System.currentTimeMillis();
-        // initializing and starting threads
+
         for (int i = 0; i < thread_number; i++) {
             thread_array[i] = new IndexCreatorThread(inverted_index, getListOfFiles(), i, thread_number);
             thread_array[i].start();
@@ -34,7 +33,7 @@ public class InvertedIndexManager implements InvertedIndexInterface {
                 e.printStackTrace();
             }
         }
-        System.out.println("Ended in " + (System.currentTimeMillis() - start_time) + " ms");
+
     }
 
     public String search(String search_request) throws RemoteException {
