@@ -36,13 +36,17 @@ public class InvertedIndexManager implements InvertedIndexInterface {
     }
 
     public String search(String search_request) throws RemoteException {
-        String[] words = search_request.split(" ");
-        List<Path> result = new ArrayList<>(inverted_index.get(words[0]));
-        for (int i = 1; i < words.length; i++) {
-            List<Path> wordSearchResult = new ArrayList<>(inverted_index.get(words[i]));
-            result = result.stream().distinct().filter(wordSearchResult::contains).toList();
+        try {
+            String[] words = search_request.split(" ");
+            List<Path> result = inverted_index.get(words[0]);
+            for (int i = 1; i < words.length; i++) {
+                List<Path> wordSearchResult = inverted_index.get(words[i]);
+                result = result.stream().distinct().filter(wordSearchResult::contains).toList();
+            }
+            return result.toString();
+        } catch (NullPointerException ignored) {
+            return "No data matching your request found :(";
         }
-        return result.toString();
     }
 
     private List<Path> getListOfFiles() throws IOException {
