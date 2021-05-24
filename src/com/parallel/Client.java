@@ -21,6 +21,12 @@ public class Client {
             // Looking up the registry for the remote object
             InvertedIndexInterface stub = (InvertedIndexInterface) registry.lookup("IndexInterface");
 
+            while (true) {
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("Enter your request: ");
+                String request = scanner.nextLine();
+                System.out.println(stub.search(request));
+            }
 
         } catch (Exception e) {
             System.err.println("Client exception: " + e);

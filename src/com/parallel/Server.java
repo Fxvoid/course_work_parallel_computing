@@ -25,7 +25,8 @@ public class Server {
 
             registry.bind("IndexInterface", stub);
 
-            stub.CreateInvertedIndex();
+            stub.createInvertedIndex();
+            System.out.println("Done creating inverted index!");
 
         } catch (Exception e) {
             System.err.println("Server exception: " + e);

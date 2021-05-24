@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InvertedIndexManager implements InvertedIndexInterface {
     private HashMap<String, List<Path>> invertedIndex = new HashMap<>();
@@ -15,7 +16,7 @@ public class InvertedIndexManager implements InvertedIndexInterface {
     private static final int big_folder_index_finish = 43000;
 
 
-    public void CreateInvertedIndex() throws IOException {
+    public void createInvertedIndex() throws IOException {
         List<Path> filePaths = getListOfFiles();
         for (Path path : filePaths) {
             Scanner scanner = new Scanner(path.toFile());
@@ -30,6 +31,16 @@ public class InvertedIndexManager implements InvertedIndexInterface {
                         invertedIndex.get(word).add(path);
             }
         }
+    }
+
+    public String search(String search_request) throws RemoteException {
+        String[] words = search_request.split(" ");
+        List<Path> result = new ArrayList<>(invertedIndex.get(words[0]));
+        for (int i = 1; i < words.length; i++) {
+            List<Path> wordSearchResult = new ArrayList<>(invertedIndex.get(words[i]));
+            result = result.stream().distinct().filter(wordSearchResult::contains).toList();
+        }
+        return result.toString();
     }
 
     private List<Path> getListOfFiles() throws IOException {
