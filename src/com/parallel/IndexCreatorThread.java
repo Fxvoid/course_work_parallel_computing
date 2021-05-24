@@ -35,8 +35,11 @@ public class IndexCreatorThread extends Thread {
                         Set<Path> values = new HashSet<>();
                         values.add(path);
                         inverted_index.putIfAbsent(word, values);
-                    } else
-                        inverted_index.get(word).add(path);
+                    } else {
+                        Set<Path> values = inverted_index.get(word);
+                        values.add(path);
+                        inverted_index.replace(word, values);
+                    }
             }
         }
     }
