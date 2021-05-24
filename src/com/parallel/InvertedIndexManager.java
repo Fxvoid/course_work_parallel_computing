@@ -38,9 +38,9 @@ public class InvertedIndexManager implements InvertedIndexInterface {
     public String search(String search_request) throws RemoteException {
         try {
             String[] words = search_request.split(" ");
-            List<Path> result = inverted_index.get(words[0]);
+            List<Path> result = inverted_index.get(normalizeWord(words[0]));
             for (int i = 1; i < words.length; i++) {
-                List<Path> wordSearchResult = inverted_index.get(words[i]);
+                List<Path> wordSearchResult = inverted_index.get(normalizeWord(words[i]));
                 result = result.stream().distinct().filter(wordSearchResult::contains).toList();
             }
             return result.toString();
@@ -63,6 +63,10 @@ public class InvertedIndexManager implements InvertedIndexInterface {
         String fileName = filePath.getFileName().toString();
         int _i = fileName.indexOf("_");
         return Integer.parseInt(fileName.substring(0, _i));
+    }
+
+    private String normalizeWord(String word) {
+        return word.toLowerCase().replaceAll("[^a-zA-Z]", "");
     }
 
 }
