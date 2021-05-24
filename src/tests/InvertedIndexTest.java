@@ -1,5 +1,6 @@
-package com.parallel;
+package tests;
 
+import logic.InvertedIndexManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

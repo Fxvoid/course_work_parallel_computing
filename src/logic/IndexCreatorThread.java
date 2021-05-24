@@ -1,12 +1,12 @@
-package com.parallel;
+package logic;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.parallel.InvertedIndexManager.isBannedWord;
-import static com.parallel.InvertedIndexManager.normalizeWord;
+import static logic.InvertedIndexManager.isBannedWord;
+import static logic.InvertedIndexManager.normalizeWord;
 
 public class IndexCreatorThread extends Thread {
     ConcurrentHashMap<String, Set<Path>> inverted_index;
@@ -32,8 +32,8 @@ public class IndexCreatorThread extends Thread {
                 e.printStackTrace();
             }
             while (scanner.hasNext()) {
-                String word = normalizeWord(scanner.next());
-                if (!isBannedWord(word))
+                String word = InvertedIndexManager.normalizeWord(scanner.next());
+                if (!InvertedIndexManager.isBannedWord(word))
                     if (!inverted_index.containsKey(word)) {
                         Set<Path> values = new HashSet<>();
                         values.add(path);

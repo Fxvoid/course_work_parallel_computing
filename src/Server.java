@@ -1,4 +1,5 @@
-package com.parallel;
+import logic.InvertedIndexInterface;
+import logic.InvertedIndexManager;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
