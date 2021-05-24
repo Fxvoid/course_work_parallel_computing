@@ -2,18 +2,15 @@ package com.parallel;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IndexCreatorThread extends Thread {
-    ConcurrentHashMap<String, List<Path>> inverted_index;
+    ConcurrentHashMap<String, Set<Path>> inverted_index;
     List<Path> file_paths;
     Integer thread_index, max_threads;
 
-    public IndexCreatorThread(ConcurrentHashMap<String, List<Path>> inverted_index, List<Path> file_paths,
+    public IndexCreatorThread(ConcurrentHashMap<String, Set<Path>> inverted_index, List<Path> file_paths,
                               Integer thread_index, Integer max_threads) {
         this.inverted_index = inverted_index;
         this.file_paths = file_paths;
@@ -35,7 +32,7 @@ public class IndexCreatorThread extends Thread {
                 String word = normalizeWord(scanner.next());
                 if (!isBannedWord(word))
                     if (!inverted_index.containsKey(word)) {
-                        List<Path> values = new ArrayList<>();
+                        Set<Path> values = new HashSet<>();
                         values.add(path);
                         inverted_index.putIfAbsent(word, values);
                     } else

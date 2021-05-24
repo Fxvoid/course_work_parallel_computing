@@ -7,9 +7,10 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class InvertedIndexManager implements InvertedIndexInterface {
-    private final ConcurrentHashMap<String, List<Path>> inverted_index = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Set<Path>> inverted_index = new ConcurrentHashMap<>();
     private static final int SMALL_FOLDER_INDEX_START = 10500;
     private static final int SMALL_FOLDER_INDEX_FINISH = 10750;
     private static final int BIG_FOLDER_INDEX_START = 42000;
@@ -39,10 +40,10 @@ public class InvertedIndexManager implements InvertedIndexInterface {
     public String search(String search_request) throws RemoteException {
         try {
             String[] words = search_request.split(" ");
-            List<Path> result = inverted_index.get(normalizeWord(words[0]));
+            Set<Path> result = inverted_index.get(normalizeWord(words[0]));
             for (int i = 1; i < words.length; i++) {
-                List<Path> word_search_result = inverted_index.get(normalizeWord(words[i]));
-                result = result.stream().distinct().filter(word_search_result::contains).toList();
+                Set<Path> word_search_result = inverted_index.get(normalizeWord(words[i]));
+                result = result.stream().distinct().filter(word_search_result::contains).collect(Collectors.toSet());
             }
             return result.toString();
         } catch (NullPointerException ignored) {
